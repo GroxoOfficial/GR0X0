@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GROXO Admin Panel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f1f1;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    .success {
+      color: green;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🛒 Add Product to GROXO</h2>
+    <input type="text" id="name" placeholder="Product Name" required />
+    <input type="text" id="price" placeholder="Price (e.g. 999)" required />
+    <input type="text" id="image" placeholder="Image URL" required />
+    <button onclick="addProduct()">Add Product</button>
+    <div class="success" id="msg"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP90LBDuv_xHnN8YLm-jj-WA0jQww31Nc",
+      authDomain: "groxo-663d5.firebaseapp.com",
+      projectId: "groxo-663d5",
+      storageBucket: "groxo-663d5.firebasestorage.app",
+      messagingSenderId: "730593595877",
+      appId: "1:730593595877:web:b8c2c59f719bfdf7721f0c",
+      databaseURL: "https://groxo-663d5-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    window.addProduct = function () {
+      const name = document.getElementById('name').value;
+      const price = document.getElementById('price').value;
+      const image = document.getElementById('image').value;
+
+      if (!name || !price || !image) {
+        alert("Please fill all fields!");
+        return;
+      }
+
+      const productsRef = ref(db, 'products/');
+      push(productsRef, { name, price, image })
+        .then(() => {
+          document.getElementById('msg').textContent = "✅ Product added successfully!";
+          document.getElementById('name').value = '';
+          document.getElementById('price').value = '';
+          document.getElementById('image').value = '';
+        })
+        .catch((error) => {
+          alert("Error adding product: " + error);
+        });
+    };
+  </script>
+</body>
+</html>
