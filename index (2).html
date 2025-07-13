@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GROXO Store</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+    }
+    header {
+      background: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .product {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: 0.3s;
+    }
+    .product:hover {
+      transform: scale(1.02);
+    }
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 15px;
+      flex: 1;
+    }
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .product-price {
+      font-size: 1rem;
+      color: green;
+      margin: 8px 0;
+    }
+    .buy-btn {
+      padding: 10px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    .buy-btn:hover {
+      background: #218838;
+    }
+  </style>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP90LBDuv_xHnN8YLm-jj-WA0jQww31Nc",
+      authDomain: "groxo-663d5.firebaseapp.com",
+      projectId: "groxo-663d5",
+      storageBucket: "groxo-663d5.firebasestorage.app",
+      messagingSenderId: "730593595877",
+      appId: "1:730593595877:web:b8c2c59f719bfdf7721f0c",
+      databaseURL: "https://groxo-663d5-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const productsRef = ref(db, 'products/');
+
+    onValue(productsRef, (snapshot) => {
+      const container = document.querySelector('.products');
+      container.innerHTML = '';
+      snapshot.forEach((child) => {
+        const data = child.val();
+        const card = document.createElement('div');
+        card.className = 'product';
+        card.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" />
+          <div class="product-info">
+            <p class="product-title">${data.name}</p>
+            <p class="product-price">₹${data.price}</p>
+            <button class="buy-btn" onclick="orderNow('${data.name}')">Buy Now</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    });
+
+    window.orderNow = function(productName) {
+      const msg = `Hello! I want to order: ${productName}`;
+      const url = `https://wa.me/919942670442?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+  </script>
+</head>
+<body>
+  <header>🛒 GROXO Store</header>
+  <div class="products">
+    <!-- Products will load here -->
+  </div>
+</body>
+</html>
